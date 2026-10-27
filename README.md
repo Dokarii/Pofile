@@ -16,7 +16,7 @@ El sistema separa la orquestación de la ejecución, utilizando una red interna 
 [2] Iniciar descarga  (HTTP POST)
         |
         v
-[3] Esperar 30 s  (Wait)  <--------------------+
+[3] Esperar 5s  (Wait)  <--------------------+
         |                                       |
         v                                       |
 [4] Consultar estado  (HTTP GET)                |
