@@ -1,0 +1,198 @@
+{
+  "name": "pofiwd",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Descargar videos de TikTok",
+        "formDescription": "Pegar el link del perfil en cuestión",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Perfil",
+              "placeholder": "https://www.tiktok.com/@usuario",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -16,
+        16
+      ],
+      "id": "b75d86f7-8865-4f78-be11-218d0578ddf6",
+      "name": "On form submission",
+      "webhookId": "d74cf8af-9b6b-4c9b-8115-828a2de2a967"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        352,
+        16
+      ],
+      "id": "e23130b8-efac-4f7b-b6b7-86c221ef676e",
+      "name": "Esperar 30s",
+      "webhookId": "eb73bf4e-a990-4fc2-bc8d-0111045c6628"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": " http://downloader:5000/download",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"url\": $json.Perfil } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        160,
+        16
+      ],
+      "id": "ae8399de-f68d-4de7-ac65-af946930ec55",
+      "name": "IniciarDescarga"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "35a32953-b7cc-4fbf-abab-89c18817c19c",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "running",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        656,
+        16
+      ],
+      "id": "bb93cd00-9941-4f49-86a0-0f8e17955d26",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "=http://downloader:5000/status/{{$('IniciarDescarga').item.json.job_id}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        512,
+        16
+      ],
+      "id": "729270bb-4d0d-4fed-8fda-8aa019f83820",
+      "name": "ConsultarEstado"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        864,
+        32
+      ],
+      "id": "7f6fffeb-f808-4c87-9c9d-510d08bc7e60",
+      "name": "DescargaTerminada"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "IniciarDescarga",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esperar 30s": {
+      "main": [
+        [
+          {
+            "node": "ConsultarEstado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IniciarDescarga": {
+      "main": [
+        [
+          {
+            "node": "Esperar 30s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ConsultarEstado": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Esperar 30s",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DescargaTerminada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "80809606-424a-438c-ab05-3952921ea022",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "491c7b3f7ca26043a863cdf931a1a8ebae58caa3bb14670120ea533effb8f3f7"
+  },
+  "nodeGroups": [],
+  "id": "YCjvvpMrssMh7YmN",
+  "tags": []
+}

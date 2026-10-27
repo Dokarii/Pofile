@@ -1,0 +1,5 @@
+# Videos descargados y datos personales: nunca se suben al repositorio
+downloads/
+config/cookies.txt
+.env
+__pycache__/
