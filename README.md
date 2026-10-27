@@ -10,11 +10,22 @@ El sistema separa la orquestación de la ejecución, utilizando una red interna 
 2. **Microservicio (Flask + yt-dlp):** Procesa la descarga en segundo plano y expone *endpoints* de control (`/download`, `/status/<job_id>`, `/health`).
 
 ```text
-[Formulario n8n] -> POST /download -> [Microservicio Flask] -> Inicia yt-dlp + ffmpeg
-       |                                       |
-       +<-- GET /status/<job_id> (cada 30s) <--+ 
-       |                                       v
-[Condicional IF]                         Guarda en ./downloads/USUARIO/
+[1] On form submission
+        |
+        v
+[2] Iniciar descarga  (HTTP POST)
+        |
+        v
+[3] Esperar 30 s  (Wait)  <--------------------+
+        |                                       |
+        v                                       |
+[4] Consultar estado  (HTTP GET)                |
+        |                                       |
+        v                                       |
+[5] ¿Sigue corriendo?  (If)                     |
+        |-- true  (status = running) -----------+
+        |
+        `-- false (terminó) --> [6] Descarga terminada (No Operation)
 ```
 
 ## Características Principales
