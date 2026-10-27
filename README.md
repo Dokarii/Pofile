@@ -25,7 +25,7 @@ El sistema separa la orquestación de la ejecución, utilizando una red interna 
 [5] ¿Sigue corriendo?  (If)                     |
         |-- true  (status = running) -----------+
         |
-        `-- false (terminó) --> [6] Descarga terminada (No Operation)
+        `-- false (terminó) --> [6] Descarga terminada (No Operation) 
 ```
 
 ## Características Principales
